@@ -1,0 +1,245 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "q": "subject:(rekrutacja OR aplikacja OR application OR interview OR dziękujemy) -from:linkedin"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a777bc38-e4b3-4acd-961f-ff7a455db524",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CUTcwD8qC0wKEb2i",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=\nTwoim zadaniem jest wyciągnięcie danych i zwrócenie ich WYŁĄCZNIE w czystym formacie JSON, bez żadnego wstępu, podsumowań ani znaczników markdown (nie używaj ```json). Format wyjściowy musi wyglądać dokładnie tak:\n\n{\n  \"firma\": \"Nazwa Firmy\"\n}\n{\n  \"stanowisko\": \"Nazwa Stanowiska\",\n}\n{\n\"status\": \"Obecny status (np. Aplikowano / Rozmowa techniczna / Odrzucono)\",\n}\n{\n\"notatka\": \"Krótkie jednozdaniowe podsumowanie z maila\"\n}\n\nOto dane do analizy:\nTemat wiadomości: {{ $json.Subject }}\nOd: {{ $json.From }}\nSkrót treści wiadomości: {{ $json.snippet }}",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "01406b66-7b46-445e-a8d6-2b606a1f904f",
+      "name": "AI Agent",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        80,
+        208
+      ],
+      "id": "fc2f8acf-642c-4cc5-845b-d13499611fb9",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "B6qJpS6qmKIsMyDD",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1ZhCpM7yE0FFW9bFQl1v41KkDEH7suzN8AWdAAU3-VT4",
+          "mode": "list",
+          "cachedResultName": "n8n Email agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZhCpM7yE0FFW9bFQl1v41KkDEH7suzN8AWdAAU3-VT4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZhCpM7yE0FFW9bFQl1v41KkDEH7suzN8AWdAAU3-VT4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Firma": "={{ $json.output.properties.firma.type }}",
+            "stanowisko": "={{ $json.output.properties.stanowisko.type }}",
+            "Status": "={{ $json.output.properties.status.type }}",
+            "Notatka": "={{ $json.output.properties.notatka.type }}"
+          },
+          "matchingColumns": [
+            "Firma"
+          ],
+          "schema": [
+            {
+              "id": "Firma",
+              "displayName": "Firma",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "stanowisko",
+              "displayName": "stanowisko",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Notatka",
+              "displayName": "Notatka",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "output",
+              "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        560,
+        0
+      ],
+      "id": "c4483b57-d4f5-40d3-9a35-71ec591afc67",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6ZObpLFcqio6YxQc",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"firma\": {\n      \"type\": \"string\"\n    },\n    \"stanowisko\": {\n      \"type\": \"string\"\n    },\n    \"status\": {\n      \"type\": \"string\"\n    },\n    \"notatka\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\"firma\", \"stanowisko\", \"status\", \"notatka\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        384,
+        208
+      ],
+      "id": "9417fe6c-d97b-4d3f-8bc3-502b3d57b404",
+      "name": "Structured Output Parser"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "d514ff72-0530-4ef4-9290-aa0bdc582524",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3f9e2e831863d98b6f69019f6a844fe2fe9d984bdd7ab59cd970b386f64d28ad"
+  },
+  "nodeGroups": [],
+  "id": "iWbnIwp5P4vQE6xf",
+  "tags": []
+}

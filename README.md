@@ -1,5 +1,5 @@
 # N8n-email-agent
-Email agent to collect job application email in google sheets
+Email agent to collect job application emails in google sheets
 
 Opis projektu: Automatyczny system analizy i kategoryzacji wiadomości e-mail oparty na n8n, wykorzystujący LLM (Gemini) do ekstrakcji kluczowych danych i zapisujący wyniki w Google Sheets.
 

@@ -32,7 +32,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=\nTwoim zadaniem jest wyciągnięcie danych i zwrócenie ich WYŁĄCZNIE w czystym formacie JSON, bez żadnego wstępu, podsumowań ani znaczników markdown (nie używaj ```json). W polu pilne zwróć wartość true (jako boolean, bez cudzysłowu), jeśli treść maila jednoznacznie wskazuje na zaproszenie na rozmowę kwalifikacyjną, kolejny etap rekrutacji, testy techniczne lub bezpośredni kontakt telefoniczny/spotkanie od rekrutera. W każdym innym przypadku (zwykłe potwierdzenie złożenia CV, odrzucenie aplikacji, spam) wpisz falseFormat wyjściowy musi wyglądać dokładnie tak:\n\n{\n  \"firma\": \"Nazwa Firmy\"\n}\n{\n  \"stanowisko\": \"Nazwa Stanowiska\",\n}\n{\n\"status\": \"Obecny status (np. Aplikowano / Rozmowa techniczna / Odrzucono)\",\n}\n{\n\"notatka\": \"Krótkie jednozdaniowe podsumowanie z maila\"\n}\n{\n\"pilne\": bool\n}\n\nOto dane do analizy:\nTemat wiadomości: {{ $json.Subject }}\nOd: {{ $json.From }}\nSkrót treści wiadomości: {{ $json.snippet }}\n\n",
+        "text": "=Twoim zadaniem jest wyciągnięcie danych z wiadomości e-mail i zwrócenie ich WYŁĄCZNIE w czystym formacie JSON, bez żadnego wstępu, podsumowań ani znaczników markdown (kategorycznie nie używaj ```json ani \n```). \n\nW polu \"pilne\" zwróć wartość true (jako boolean, bez cudzysłowu), jeśli treść maila jednoznacznie wskazuje na zaproszenie na rozmowę kwalifikacyjną, kolejny etap rekrutacji, testy techniczne lub bezpośredni kontakt telefoniczny/spotkanie od rekrutera. W każdym innym przypadku (zwykłe potwierdzenie złożenia CV, odrzucenie aplikacji, spam) wpisz false.\n\nTwój wynik musi być pojedynczym, poprawnym obiektem strukturalnym. Format wyjściowy musi wyglądać dokładnie tak:\n\n{\n  \"firma\": \"Nazwa Firmy\",\n  \"stanowisko\": \"Nazwa Stanowiska\",\n  \"status\": \"Obecny status (np. Aplikowano / Rozmowa techniczna / Odrzucono)\",\n  \"notatka\": \"Krótkie jednozdaniowe podsumowanie z maila\",\n  \"pilne\": false\n}\n\nOto dane do analizy:\nTemat wiadomości: {{ $json.Subject }}\nOd: {{ $json.From }}\nSkrót treści wiadomości: {{ $json.snippet }}",
         "hasOutputParser": true,
         "options": {}
       },
@@ -170,7 +170,7 @@
     },
     {
       "parameters": {
-        "jsonSchemaExample": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"firma\": {\n      \"type\": \"string\"\n    },\n    \"stanowisko\": {\n      \"type\": \"string\"\n    },\n    \"status\": {\n      \"type\": \"string\"\n    },\n    \"notatka\": {\n      \"type\": \"string\"\n    },\n    \"pilne\":{\n      \"type\": \"bool\"\n    }\n  },\n  \"required\": [\"firma\", \"stanowisko\", \"status\", \"notatka\",\"pilne\"]\n}"
+        "jsonSchemaExample": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"firma\": {\n      \"type\": \"string\"\n    },\n    \"stanowisko\": {\n      \"type\": \"string\"\n    },\n    \"status\": {\n      \"type\": \"string\"\n    },\n    \"notatka\": {\n      \"type\": \"string\"\n    },\n    \"pilne\": {\n      \"type\": \"boolean\"\n    }\n  },\n  \"required\": [\"firma\", \"stanowisko\", \"status\", \"notatka\", \"pilne\"]\n}"
       },
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
@@ -317,7 +317,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "1a28db7c-c713-4fb1-87ab-ef9e38b507e9",
+  "versionId": "cc1f5560-62e8-4592-a0ed-f9676968aff4",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "31fa5f0260ea2ccecd17dda80ea2d02f985eceab966308011d9d39bedb838f63"

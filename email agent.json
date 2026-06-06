@@ -20,11 +20,11 @@
         0,
         0
       ],
-      "id": "a777bc38-e4b3-4acd-961f-ff7a455db524",
+      "id": "3317f5f9-6153-412e-99af-fd3ec5ed0ad6",
       "name": "Gmail Trigger",
       "credentials": {
         "gmailOAuth2": {
-          "id": "CUTcwD8qC0wKEb2i",
+          "id": "iDGDwJDDBnMEA2H9",
           "name": "Gmail account"
         }
       }
@@ -32,7 +32,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=\nTwoim zadaniem jest wyciągnięcie danych i zwrócenie ich WYŁĄCZNIE w czystym formacie JSON, bez żadnego wstępu, podsumowań ani znaczników markdown (nie używaj ```json). Format wyjściowy musi wyglądać dokładnie tak:\n\n{\n  \"firma\": \"Nazwa Firmy\"\n}\n{\n  \"stanowisko\": \"Nazwa Stanowiska\",\n}\n{\n\"status\": \"Obecny status (np. Aplikowano / Rozmowa techniczna / Odrzucono)\",\n}\n{\n\"notatka\": \"Krótkie jednozdaniowe podsumowanie z maila\"\n}\n\nOto dane do analizy:\nTemat wiadomości: {{ $json.Subject }}\nOd: {{ $json.From }}\nSkrót treści wiadomości: {{ $json.snippet }}",
+        "text": "=\nTwoim zadaniem jest wyciągnięcie danych i zwrócenie ich WYŁĄCZNIE w czystym formacie JSON, bez żadnego wstępu, podsumowań ani znaczników markdown (nie używaj ```json). W polu pilne zwróć wartość true (jako boolean, bez cudzysłowu), jeśli treść maila jednoznacznie wskazuje na zaproszenie na rozmowę kwalifikacyjną, kolejny etap rekrutacji, testy techniczne lub bezpośredni kontakt telefoniczny/spotkanie od rekrutera. W każdym innym przypadku (zwykłe potwierdzenie złożenia CV, odrzucenie aplikacji, spam) wpisz falseFormat wyjściowy musi wyglądać dokładnie tak:\n\n{\n  \"firma\": \"Nazwa Firmy\"\n}\n{\n  \"stanowisko\": \"Nazwa Stanowiska\",\n}\n{\n\"status\": \"Obecny status (np. Aplikowano / Rozmowa techniczna / Odrzucono)\",\n}\n{\n\"notatka\": \"Krótkie jednozdaniowe podsumowanie z maila\"\n}\n{\n\"pilne\": bool\n}\n\nOto dane do analizy:\nTemat wiadomości: {{ $json.Subject }}\nOd: {{ $json.From }}\nSkrót treści wiadomości: {{ $json.snippet }}\n\n",
         "hasOutputParser": true,
         "options": {}
       },
@@ -42,10 +42,10 @@
         208,
         0
       ],
-      "id": "01406b66-7b46-445e-a8d6-2b606a1f904f",
+      "id": "2c0b327e-70b4-418d-8730-2840bf5fc35b",
       "name": "AI Agent",
       "retryOnFail": true,
-      "maxTries": 5,
+      "maxTries": 3,
       "waitBetweenTries": 5000
     },
     {
@@ -59,11 +59,11 @@
         80,
         208
       ],
-      "id": "fc2f8acf-642c-4cc5-845b-d13499611fb9",
+      "id": "3ae617fe-a0b3-48bf-b3b1-2fa94598c7f2",
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
-          "id": "B6qJpS6qmKIsMyDD",
+          "id": "0sOT6ieaeuj9x465",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -156,21 +156,21 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        560,
+        688,
         0
       ],
-      "id": "c4483b57-d4f5-40d3-9a35-71ec591afc67",
+      "id": "9942980d-df54-4c6a-a7e0-571563622371",
       "name": "Append or update row in sheet",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "6ZObpLFcqio6YxQc",
+          "id": "TLlrBmQ9gmd0YioS",
           "name": "Google Sheets account"
         }
       }
     },
     {
       "parameters": {
-        "jsonSchemaExample": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"firma\": {\n      \"type\": \"string\"\n    },\n    \"stanowisko\": {\n      \"type\": \"string\"\n    },\n    \"status\": {\n      \"type\": \"string\"\n    },\n    \"notatka\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\"firma\", \"stanowisko\", \"status\", \"notatka\"]\n}"
+        "jsonSchemaExample": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"firma\": {\n      \"type\": \"string\"\n    },\n    \"stanowisko\": {\n      \"type\": \"string\"\n    },\n    \"status\": {\n      \"type\": \"string\"\n    },\n    \"notatka\": {\n      \"type\": \"string\"\n    },\n    \"pilne\":{\n      \"type\": \"bool\"\n    }\n  },\n  \"required\": [\"firma\", \"stanowisko\", \"status\", \"notatka\",\"pilne\"]\n}"
       },
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
@@ -178,8 +178,74 @@
         384,
         208
       ],
-      "id": "9417fe6c-d97b-4d3f-8bc3-502b3d57b404",
+      "id": "c5cb456f-e28e-41cb-a9e5-a11ac22394c6",
       "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f5b5410e-4f55-432a-b41a-94d286768751",
+              "leftValue": "={{ $json.output.properties.pilne }}",
+              "rightValue": "True",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        464,
+        -112
+      ],
+      "id": "7c193d95-1418-41c2-9a47-06b94b4b024e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pushbullet.com/v2/pushes",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Pilne: kolejny etap rekrutacji",
+              "value": "=firma: {{ $('AI Agent').item.json.output.properties.firma }} stanowisko: {{ $('AI Agent').item.json.output.properties.stanowisko }} notatka {{ $('AI Agent').item.json.output.properties.notatka }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        704,
+        -128
+      ],
+      "id": "47728938-6e49-4e9d-b599-e62e0d0fe9c3",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "aS5geFUBd3RSoLu5",
+          "name": "Header Auth account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -213,6 +279,11 @@
             "node": "Append or update row in sheet",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -227,19 +298,31 @@
           }
         ]
       ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "d514ff72-0530-4ef4-9290-aa0bdc582524",
+  "versionId": "1a28db7c-c713-4fb1-87ab-ef9e38b507e9",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "3f9e2e831863d98b6f69019f6a844fe2fe9d984bdd7ab59cd970b386f64d28ad"
+    "instanceId": "31fa5f0260ea2ccecd17dda80ea2d02f985eceab966308011d9d39bedb838f63"
   },
   "nodeGroups": [],
-  "id": "iWbnIwp5P4vQE6xf",
+  "id": "Et9iqUPuHQLnOoTJ",
   "tags": []
 }

@@ -21,7 +21,7 @@ N8N_PORT
 PORT
 WEBHOOK_URL
 
-3.Zaimportować Twój plik .json do n8n.
+3.Zaimportować plik .json do n8n.
 4.Ustawić OAuth w Google Cloud.
 
 

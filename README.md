@@ -24,5 +24,5 @@ WEBHOOK_URL
 3.Zaimportować plik .json do n8n.
 4.Ustawić OAuth w Google Cloud.
 
+<img width="2787" height="1370" alt="image" src="https://github.com/user-attachments/assets/ecbe5b35-6bf4-4374-88d0-60e5d76a4f9f" />
 
-<img width="2161" height="1167" alt="image" src="https://github.com/user-attachments/assets/89c3d11b-c1c7-467c-a667-afd531d2e6c5" />

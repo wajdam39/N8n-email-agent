@@ -1,0 +1,293 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1ZhCpM7yE0FFW9bFQl1v41KkDEH7suzN8AWdAAU3-VT4",
+          "mode": "list",
+          "cachedResultName": "n8n Email agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZhCpM7yE0FFW9bFQl1v41KkDEH7suzN8AWdAAU3-VT4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZhCpM7yE0FFW9bFQl1v41KkDEH7suzN8AWdAAU3-VT4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Firma": "={{ JSON.parse($json.output).firma }}",
+            "stanowisko": "={{ JSON.parse($json.output).stanowisko }}",
+            "Status": "={{ JSON.parse($json.output).status }}",
+            "Notatka": "={{ JSON.parse($json.output).notatka }}"
+          },
+          "matchingColumns": [
+            "Firma"
+          ],
+          "schema": [
+            {
+              "id": "Firma",
+              "displayName": "Firma",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "stanowisko",
+              "displayName": "stanowisko",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Notatka",
+              "displayName": "Notatka",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "output",
+              "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1024,
+        416
+      ],
+      "id": "fcb48a3f-769e-4c54-bd8d-a1ea558a9a13",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3BOJhDrTrlwDYGGa",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f5b5410e-4f55-432a-b41a-94d286768751",
+              "leftValue": "={{ JSON.parse($json.output).pilne }}",
+              "rightValue": "True",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        832,
+        304
+      ],
+      "id": "0ce2363a-f600-4651-95c0-1028ab1ca5d6",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pushbullet.com/v2/pushes",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"type\": \"note\",\n  \"title\": \"Aplikowano: {{ JSON.parse($json.output).firma }}\",\n  \"body\": \"Stanowisko: {{ JSON.parse($json.output).stanowisko }}\\nStatus: {{ JSON.parse($json.output).status }}\\nNotatka: {{ JSON.parse($json.output).notatka }}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1040,
+        288
+      ],
+      "id": "ad58206d-d135-4a5e-9a55-d3687b2c0af6",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "aFeSNcB3IYmWvjY4",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "q": "subject:(rekrutacja OR aplikacja OR application OR interview OR dziękujemy) -from:linkedin"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        336,
+        416
+      ],
+      "id": "8a26b16a-0e7d-42b0-b9c6-3b4e4d8b4a80",
+      "name": "Gmail Trigger1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "HjDywegqc7XHv6w0",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        624
+      ],
+      "id": "52e3575d-81af-4eae-9ba6-b98d8cb502d6",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "3tKlsMXUCampIO5K",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Jesteś parserem danych. Przeczytaj uważnie treść wiadomości e-mail, którą dostałeś w polu User Message. \nTwoim zadaniem jest wyciągnąć z tej treści: nazwę firmy, stanowisko oraz napisać krótką notatkę.\n\nZwróć wynik TYLKO I WYŁĄCZNIE jako czysty obiekt JSON. Nie dodawaj żadnych wstępów.\n\nWartości w JSON muszą być wypełnione realnymi danymi z maila! \nPrzykład:\n{\"firma\": \"Nazwa z maila\", \"stanowisko\": \"Stanowisko z maila\", \"status\": \"Aplikowano\", \"notatka\": \"Notatka z maila\", \"pilne\": false}\n\nTreść maila do przeanalizowania:\n{{ $json.snippet }} {{ $json.Subject }}\n\nABSOLUTNY ZAKAZ używania znaczników kodu typu ```json oraz ``` na początku i końcu odpowiedzi. \nTwój wynik ma być czystym tekstem, który zaczyna się bezpośrednio od znaku { a kończy na }.\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        560,
+        416
+      ],
+      "id": "de9a2d8c-c185-46bb-a41c-10045f76dc58",
+      "name": "AI Agent"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "aaeb8bd3-4208-491a-a3b5-60d0245e139e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "286be4fa209ce603ce8d834575fed4714809e82ce002c2566de5e203e185e128"
+  },
+  "nodeGroups": [],
+  "id": "fyO45DFYpYQjhMKq",
+  "tags": []
+}

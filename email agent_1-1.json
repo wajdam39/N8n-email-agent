@@ -117,7 +117,7 @@
               "rightValue": "True",
               "operator": {
                 "type": "boolean",
-                "operation": "false",
+                "operation": "true",
                 "singleValue": true
               }
             }
@@ -277,12 +277,12 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "aaeb8bd3-4208-491a-a3b5-60d0245e139e",
+  "versionId": "5ccd477e-68be-4c6a-82f4-dacb3dc2d396",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "286be4fa209ce603ce8d834575fed4714809e82ce002c2566de5e203e185e128"
